@@ -226,6 +226,8 @@ INSERT INTO `customers` (`id`, `lot_id`, `vat_customer`) VALUES
 
 ##### Способ 1
 
+http://www.sqlfiddle.com/#!9/325ada/1
+
 ```sql
 SELECT 
   `p`.`name` AS `name`, 
@@ -254,6 +256,8 @@ JOIN (
 ```
 
 ##### Способ 2
+
+http://www.sqlfiddle.com/#!9/325ada/15
 
 ```sql
 SELECT 
