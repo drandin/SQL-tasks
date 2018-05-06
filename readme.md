@@ -76,8 +76,8 @@ SET @count_value_order = 0;
 ```sql
 SELECT 
        `products`.`name` AS `name`, 
-       (@count_value_order := @count_value_order + `orders`) as `orders`, 
-      `date` 
+       (@count_value_order := @count_value_order + `orders`) AS `orders`, 
+       `date` 
 FROM (
           SELECT 
                  `id_product`, 
