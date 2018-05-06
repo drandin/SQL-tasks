@@ -273,3 +273,36 @@ FROM (
         JOIN `procedures` ON `procedures`.`id` = `table_sum`.`procedure_id`
 GROUP BY `procedure_id`;
 ```
+
+### 4. Поиск пропусков идентификаторов
+
+Написать SQL запрос который выведет все пропуски.
+
+http://sqlfiddle.com/#!9/e8ea82/1635
+
+```sql
+CREATE TABLE test (
+  id INT NOT NULL PRIMARY KEY
+);
+```
+
+```sql
+INSERT INTO test (id) VALUES (1), (2), (3), (6), (8), (9), (12);
+```
+
+Ответ:
+
+```sql
+SELECT 
+`id` AS `id_one`,
+      (
+        SELECT `test`.`id` 
+          FROM `test` 
+         WHERE `test`.`id` > `test_interval`.`id` 
+      ORDER BY `id` ASC 
+         LIMIT 1
+      ) AS id_two
+FROM `test` AS `test_interval`
+HAVING `id_two` - `id_one` > 1; 
+```
+
