@@ -306,3 +306,40 @@ FROM `test` AS `test_interval`
 HAVING `id_two` - `id_one` > 1; 
 ```
 
+### 5. Получение «свежих» значений по каждой валютной паре
+
+В таблице содержатся данные со значениями валютных пар в разные даты. Набор валютных пар ограничен – предположим, что их около 50 штук. Данные в таблице обновляются каждый день, но может случиться так, что  в какой-то из дней нет данных по некоторым валютным парам. Необходимо написать запрос, который получит самые «свежие» значения по каждой валютной паре. Если за текущий день значения по какой-то из валютных пар отсутствует, то необходимо выбрать предыдущее значение, и т.д. 
+
+```sql
+CREATE TABLE IF NOT EXISTS `exchangeRates` (
+  `id` int(11) NOT NULL auto_increment,
+  `symbol` enum('EURUSD','GBPUSD','NZDUSD') NOT NULL,
+  `date` date NOT NULL,
+  `value` float NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `symbol` (`symbol`),
+  KEY `date` (`date`)
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251 AUTO_INCREMENT=5 ;
+```
+
+```sql
+INSERT INTO `exchangeRates` (`id`, `symbol`, `date`, `value`) VALUES
+(1, 'EURUSD', '2014-09-18', 1.34),
+(2, 'GBPUSD', '2014-09-18', 1.67),
+(3, 'EURUSD', '2014-09-17', 1.31),
+(4, 'NZDUSD', '2014-09-17', 0.83);
+```
+
+```sql
+SELECT `exchangeRates`.*
+  FROM `exchangeRates` 
+ INNER JOIN (
+                SELECT 
+                       `symbol`, 
+                        MAX(`date`) AS `date` 
+			      FROM `exchangeRates` 
+              GROUP BY `symbol`
+            ) AS `uSymbolsDates` 
+ USING (`symbol`)
+ WHERE `exchangeRates`.`date` = `uSymbolsDates`.`date`;
+ ```
